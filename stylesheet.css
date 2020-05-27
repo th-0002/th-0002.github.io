@@ -35,7 +35,7 @@ p {
 
 .top-wrapper {
   height: 426px;
-  width: 1280px;
+  width: 100%;
   background-image: url("banner-5190090_1280.webp");
 }
 
