@@ -24,7 +24,7 @@ a {
 
 /*ここから書く*/
 p {
-  font-size: 20px;
+  font-size: 16px;
   line-height: 2;
 }
 
@@ -36,9 +36,13 @@ img {
   width: 100%;
 }
 
+.container {
+  width:90%;
+}
+  
 .wrapper-text {
   padding-bottom: 10px;
-  font-size: 24px;
+  font-size: 22px;
   font-style: italic;
 }
 
@@ -48,6 +52,9 @@ header {
   background-color: rgb(50, 50, 50);
   color: #fff;
   display: flex;
+  position:fixed;
+  top:0;
+  z-index:10;
 }
 
 .header-left p {
@@ -174,7 +181,7 @@ footer {
 .footer-p {
   color: #fff;
   font-weight: bold;
-  font-size: 60px;
+  font-size: 36px;
   font-style: italic;
   position: absolute;
   top:10%;
