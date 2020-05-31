@@ -120,7 +120,7 @@ header {
   margin-top: 30px;
   margin-bottom: 10px;
   font-size:22px;
-  padding-left:6px;
+  padding-left:10px;
 }
 
 .form-p {
@@ -186,6 +186,6 @@ footer {
   font-size: 36px;
   font-style: italic;
   position: absolute;
-  top:20%;
-  left: 30%;
+  top:25%;
+  left: 40%;
 }
