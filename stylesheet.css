@@ -119,8 +119,11 @@ header {
   border-bottom: 2px solid rgb(90,30,170);
   margin-top: 30px;
   margin-bottom: 10px;
+}
+
+.title h2 {
   font-size:22px;
-  padding-left:10px;
+  padding-left:6px;
 }
 
 .form-p {
