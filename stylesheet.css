@@ -1,0 +1,132 @@
+body{
+  background-color: #efdec1;
+  font-size: 1rem;
+  font-family: Verdana, sans-serif;
+}
+
+.title{
+  text-align: center;
+}
+
+.container{
+  width: 80%;
+  margin: 8px auto;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  position: relative;
+}
+
+#question{
+  margin-bottom: 30px;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+#choices{
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+#choices > li{
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+#choices > li:hover{
+  background: #f8f8f8;
+}
+
+#choices > li.correct{
+  background: #d4edda;
+  border-color: #c3e6cd;
+  color: #155724;
+  font-weight: bold;
+}
+
+#choices > li.correct::after{
+  content: '...せいかい！';
+}
+
+#choices > li.wrong{
+  background: #f8d8da;
+  border-color: #f5c6cb;
+  color: #721c24;
+  font-weight: bold;
+}
+
+#choices > li.wrong::after{
+  content: '...ざんねん！';
+}
+
+#btn,#result > a{
+  background: #3498db;
+  padding: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 4px #2880b9;
+}
+
+#btn.disabled{
+  background: #ccc;
+  box-shadow: 0 4px #bbb;
+  opacity: 0.7;
+}
+
+#result{
+  position: absolute;
+  width: 70%;
+  background: rgb(255, 255, 210);
+  padding: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  top: 50px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  border-radius: 5px;
+  text-align: center;
+  transition: 0.6s;
+}
+
+#result.hidden{
+  transform: translateY(-500px);
+}
+
+#result > p{
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+#result > a{
+  display: block;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+
+/*md(768px)以上用レスポンシブデザイン*/
+@media (min-width:768px){
+  body{
+    font-size: 22px;
+  }
+  #question{
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 22px;
+  }
+  #result > p{
+    font-size: 30px;
+    font-weight: bold;
+  }
+  #result > a{
+    display: block;
+    text-decoration: none;
+    font-size: 22px;
+  }
+}
