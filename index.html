@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>クイズ</title>
+    <style>
+      body{
+        background-color: #efdec1;
+        font-size: 1rem;
+        font-family: Verdana, sans-serif;
+      }
+
+      .start{
+        text-align: center;
+      }
+
+      .start h2{
+        font-size: 20px;
+      }
+
+      .startBtn{
+        width: 200px;
+        height: 50px;
+        background-color: #3498db;
+        color: #fff;
+        border-radius: 5px;
+      }
+
+      .none{
+        display: none;
+      }
+
+      .startBtn:hover{
+        opacity: 0.7;
+      }
+
+      .title{
+        text-align: center;
+      }
+
+      .container{
+        width: 80%;
+        margin: 8px auto;
+        background-color: #fff;
+        border-radius: 5px;
+        padding: 20px;
+        position: relative;
+      }
+
+      #question{
+        margin-bottom: 20px;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      #choices{
+        list-style: none;
+        padding: 0;
+        margin-bottom: 20px;
+      }
+
+      #choices > li{
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 20px;
+        margin-bottom: 20px;
+        cursor: pointer;
+      }
+
+      #choices > li:hover{
+        background: #f8f8f8;
+      }
+
+      #choices > li.correct{
+        background: #d4edda;
+        border-color: #c3e6cd;
+        color: #155724;
+        font-weight: bold;
+      }
+
+      #choices > li.correct::after{
+        content: '...せいかい！';
+      }
+
+      #choices > li.wrong{
+        background: #f8d8da;
+        border-color: #f5c6cb;
+        color: #721c24;
+        font-weight: bold;
+      }
+
+      #choices > li.wrong::after{
+        content: '...ざんねん！';
+      }
+
+      #btn,#result > a{
+        background: #3498db;
+        padding: 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+        color: #fff;
+        box-shadow: 0 4px #2880b9;
+      }
+
+      #btn.disabled{
+        background: #ccc;
+        box-shadow: 0 4px #bbb;
+        opacity: 0.7;
+      }
+
+      #result{
+        position: absolute;
+        width: 70%;
+        background: rgb(255, 255, 210);
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        top: 50px;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        border-radius: 5px;
+        text-align: center;
+        transition: 0.6s;
+      }
+
+      #result.hidden{
+        transform: translateY(-500px);
+      }
+
+      #result > p{
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+
+      #result > a{
+        display: block;
+        text-decoration: none;
+        font-size: 1rem;
+      }
+
+      /*md(768px)以上用レスポンシブデザイン*/
+      @media (min-width:768px){
+        body{
+          font-size: 20px;
+        }
+        #question{
+          margin-bottom: 20px;
+          font-weight: bold;
+          font-size: 20px;
+        }
+        #result > p{
+          font-size: 26px;
+          font-weight: bold;
+        }
+        #result > a{
+          display: block;
+          text-decoration: none;
+          font-size: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section id="start" class="start">
+      <h2>★47都道府県 県庁所在地 3択クイズ★</h2>
+      <p>制限時間3分30秒！1問4.5秒のペースです！</p>
+      <p>ひっかけ問題が多数あるので、問題を良く見ましょう！</p>
+      <button class="startBtn" type="button" id="startBtn">スタート！</button>
+    </section>
+
+    <section id="main" class="none">
+      <section class="title">
+        <h1 id="title"></h1>
+        <p>残り時間：<span id="timer">0.000</span></p>
+      </section>
+      <section class="container">
+        <p id="question"></p>
+        <ul id="choices"></ul>
+        <div id="btn" class="disabled">次の問題へ</div>
+
+        <section id="result" class="hidden">
+          <h3></h3>
+          <p></p>
+          <a href="">もう一度？</a>
+        </section>
+      </section>
+    </section>
+
+    <script>
+      'use strict';
+
+      {
+        let startTime;
+        let timeLeft;
+        let timeToCountDown = 210 * 1000;//秒数
+        let timerId;
+        const timer = document.getElementById('timer');
+        const start = document.getElementById('startBtn');
+
+        function updateTimer(t) {
+          let d = new Date(t);
+          let m = d.getMinutes();
+          let s = d.getSeconds();
+          let ms = d.getMilliseconds();
+          m = ('0' + m).slice(-2);
+          s = ('0' + s).slice(-2);
+          ms = ('00' + ms).slice(-3);
+          timer.textContent = m + ':' + s + ':' + ms;
+        }
+
+        function countDown() {
+          timerId = setTimeout(function() {
+            timeLeft = timeToCountDown - (Date.now() - startTime);
+            if (timeLeft < 0) {//ここで時間切れになった際の処理
+              clearTimeout(timerId);
+              timeLeft = 0;//ミリ秒の誤差を修正
+              timeToCountDown = 0;//タイマー数を０にする事でスタートを押しても再開させない
+              updateTimer(timeLeft);//0の状態でupdateTimer関数を実行
+              finish.textContent = 'タイムアップ！';
+              scoreLabel.textContent = `得点：${Math.round(100 / quizSet.length * score)} 点`;
+              result.classList.remove('hidden');
+              currentNum = quizSet.length - 1
+              return;//以降の処理を止める
+            }
+            updateTimer(timeLeft);//updateTimer関数を残り時間で実行
+            countDown();//以下指定間隔で繰り返す
+          },10);
+        }
+
+        start.addEventListener('click', () => {
+          document.getElementById('start').classList.add('none');
+          document.getElementById('main').classList.remove('none');
+          startTime = Date.now();
+          countDown();
+        });
+
+        const question = document.getElementById('question');
+        const choices = document.getElementById('choices');
+        const btn = document.getElementById('btn');
+        const result = document.getElementById('result');
+        const scoreLabel = document.querySelector('#result > p');
+        const finish = document.querySelector('#result > h3');
+        let Number = 1;
+
+        //配列の０番目を正解にする事
+        const quizSet = shuffle([
+          {q: '北海道の県庁所在地は？', c: ['札幌市', '函館市', '旭川市']},
+          {q: '青森県の県庁所在地は？', c: ['青森市', '八戸市', 'つがる市']},
+          {q: '岩手県の県庁所在地は？', c: ['盛岡市', '花巻市', '釜石市']},
+          {q: '宮城県の県庁所在地は？', c: ['仙台市', '石巻市', '気仙沼市']},
+          {q: '秋田犬の県庁所在地は？', c: ['存在しない', '横手市', '秋田市']},
+          {q: '山形県の県庁所在地は？', c: ['山形市', '新庄市', '鶴岡市']},
+          {q: '福島県の県庁所在地は？', c: ['福島市', '郡山市', 'いわき市']},
+          {q: '茨城県の県庁所在地は？', c: ['水戸市', '日立市', '茨城市']},
+          {q: '栃木県の県庁所在地は？', c: ['宇都宮市', '栃木市', '小山市']},
+          {q: '群馬県の県庁所在地は？', c: ['前橋市', '館林市', '伊勢崎市']},
+          {q: '埼玉県の県庁所在地は？', c: ['さいたま市', '埼玉市', '大宮市']},
+          {q: '千葉県の県庁所在地は？', c: ['千葉市', '船橋市', 'ふなっしー']},
+          {q: '東京都の県庁所在地は？', c: ['新宿区', '品川区', '渋谷区']},
+          {q: '神奈川県の県庁所在地は？', c: ['横浜市', '横須賀市', '川崎市']},
+          {q: '新潟県の県庁所在地は？', c: ['新潟市', '長岡市', '魚沼市']},
+          {q: '富山県の県庁所在地は？', c: ['富山市', '冨山市', '富士山市']},
+          {q: '石川県の県庁所在地は？', c: ['金沢市', '石川市', '小松市']},
+          {q: '福井県の県庁所在地は？', c: ['福井市', '福丼市', '越前市']},
+          {q: '山梨県の県庁所在地は？', c: ['甲府市', '山梨市', '甲州市']},
+          {q: '長野県の県庁所在地は？', c: ['長野市', '軽井沢市', '松本市']},
+          {q: '岐阜県の県庁所在地は？', c: ['岐阜市', '美濃加茂市', '関市']},
+          {q: '静岡県の県庁所在地は？', c: ['静岡市', '沼津市', '藤枝市']},
+          {q: '愛知県の県庁所在地は？', c: ['名古屋市', '愛知市', '豊田市']},
+          {q: '三重県の県庁所在地は？', c: ['津市', '三重市', '伊勢市']},
+          {q: '滋賀県の県庁所在地は？', c: ['大津市', '滋賀市', '琵琶湖市']},
+          {q: '京都府の県庁所在地は？', c: ['京都市', '奈良市', '大津市']},
+          {q: '大阪府の県庁所在地は？', c: ['大阪市', '神戸市', '堺市']},
+          {q: '兵庫県の県庁所在地は？', c: ['神戸市', '兵庫市', '姫路市']},
+          {q: '奈良県の県庁所在地は？', c: ['奈良市', '天理市', '大和郡山市']},
+          {q: '和歌山県の県庁所在地は？', c: ['和歌山市', '田辺市', '紀の川市']},
+          {q: '鳥取県の県庁所在地は？', c: ['鳥取市', '烏取市', '取鳥市']},
+          {q: '島根県の県庁所在地は？', c: ['松江市', '島根市', '鳥根市']},
+          {q: '岡山県の県庁所在地は？', c: ['岡山市', '岡田市', '岡本市']},
+          {q: '広島県の県庁所在地は？', c: ['広島市', '呉市', '広鳥市']},
+          {q: '山口県の県庁所在地は？', c: ['山口市', '山川市', '山本市']},
+          {q: '徳島県の県庁所在地は？', c: ['徳島市', '得島市', '徳川市']},
+          {q: '香川県の県庁所在地は？', c: ['高松市', '香川市', '讃岐市']},
+          {q: '愛媛県の県庁所在地は？', c: ['松山市', '愛媛市', '伊予市']},
+          {q: '高知県の県庁所在地は？', c: ['高知市', '高地市', '土佐市']},
+          {q: '福岡県の県庁所在地は？', c: ['福岡市', '久留米市', '福丘市']},
+          {q: '佐賀県の県庁所在地は？', c: ['佐賀市', '佐世保市', '佐画市']},
+          {q: '長崎県の県庁所在地は？', c: ['長崎市', '島原市', '雲仙市']},
+          {q: '熊本県の県庁所在地は？', c: ['熊本市', '態本市', '熊元市']},
+          {q: '大分県の県庁所在地は？', c: ['大分市', '大板市', '別府市']},
+          {q: '宮崎県の県庁所在地は？', c: ['宮崎市', '宮城市', '営埼市']},
+          {q: '鹿児島県の県庁所在地は？', c: ['鹿児島市', '天草市', '鹿児鳥市']},
+          {q: '沖縄県の県庁所在地は？', c: ['那覇市', '沖縄市', '奄美市']},
+        ]);
+        document.getElementById('title').textContent = `47都道府県クイズ（全${quizSet.length}問）`;
+
+        let currentNum = 0;
+        let isAnswered;
+        let score = 0;
+
+        function shuffle(arr) {
+          for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[j], arr[i]] = [arr[i], arr[j]];
+          }
+          return arr;
+        }
+
+        function checkAnswer(li) {
+          if (isAnswered === true) {
+            return;
+          }
+          isAnswered = true;
+
+          if (li.textContent === quizSet[currentNum].c[0]) {
+            li.classList.add('correct');
+            score++;
+          } else {
+            li.classList.add('wrong');
+          }
+
+          btn.classList.remove('disabled');
+        }
+
+        function setQuiz() {
+          isAnswered = false;
+
+          question.textContent = `問題${Number}：${quizSet[currentNum].q}`;
+          Number = Number + 1;
+
+          while (choices.firstChild) {
+            choices.removeChild(choices.firstChild);
+          }
+
+          const shuffledChoices = shuffle([...quizSet[currentNum].c]);
+          shuffledChoices.forEach(choice => {
+            const li = document.createElement('li');
+            li.textContent = choice;
+            li.addEventListener('click', () => {
+              checkAnswer(li);
+            });
+            choices.appendChild(li);
+          });
+
+          if (currentNum === quizSet.length - 1) {
+            btn.textContent = '結果を表示する';
+          }
+        }
+
+        setQuiz();
+
+        btn.addEventListener('click', () => {
+          if (btn.classList.contains('disabled')) {
+            return;
+          }
+          btn.classList.add('disabled');
+
+          if (currentNum === quizSet.length - 1) {
+            scoreLabel.textContent = `得点：${Math.round(100 / quizSet.length * score)} 点`;
+            result.classList.remove('hidden');
+            clearTimeout(timerId);
+          } else {
+            currentNum++;
+            setQuiz();
+          }
+        });
+
+      }
+    </script>
+  </body>
+</html>
