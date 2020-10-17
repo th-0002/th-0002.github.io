@@ -4,19 +4,58 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <style media="screen">
+      /* CSSのリセット */
+      html, body,
+      ul, ol, li,
+      h1, h2, h3, h4, h5, h6, p, div {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
       canvas{
         background: pink;
         display: block;
         margin: 0 auto;
         cursor: pointer;
       }
+      section{
+        margin-top:20px;
+        margin-bottom: 20px;
+      }
+      .title{
+        letter-spacing: 0.2rem;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .reset{
+        text-decoration: none;
+        display: block;
+        background: #2ecc71;
+        color: #fff;
+        height: 50px;
+        border-radius: 20px;
+        line-height: 50px;
+        text-align: center;
+        font-size: 1.5rem;
+        box-shadow: 0 5px 0 rgba(0, 0, 0, 0.2);
+        width: 50%;
+        margin: 0 auto;
+      }
+      .reset:hover{
+        opacity: 0.7;
+      }
     </style>
     <title>15Puzzle</title>
   </head>
   <body>
+    <section>
+      <h1 class='title'>☆15ピースパズル☆</h1>
+      <a href="" class='reset'>リセット</a>
+    </section>
     <canvas width="280" height="280">
       Canvas npt supported.
     </canvas>
+
     <script>
       'use strict';
       (() => {
@@ -27,7 +66,7 @@
             this.ctx = this.canvas.getContext('2d');
             this.TILE_SIZE = 70;
             this.img = document.createElement('img');
-            this.img.src = '15puzzle.png';
+            this.img.src = '15puzzle.png'; // 元の画像
             this.img.addEventListener('load', ()=> {
               this.render();
             });
@@ -209,7 +248,7 @@
           return;
         }
 
-        new PuzzleRenderer(new Puzzle(50), canvas)
+        new PuzzleRenderer(new Puzzle(50), canvas)//シャッフル回数で難易度設定
       })();
     </script>
   </body>
