@@ -27,7 +27,7 @@
             this.ctx = this.canvas.getContext('2d');
             this.TILE_SIZE = 70;
             this.img = document.createElement('img');
-            this.img.src = '15puzzle.png'; // 元の画像
+            this.img.src = '15puzzle.png';
             this.img.addEventListener('load', ()=> {
               this.render();
             });
@@ -209,7 +209,7 @@
           return;
         }
 
-        new PuzzleRenderer(new Puzzle(30), canvas)
+        new PuzzleRenderer(new Puzzle(50), canvas)
       })();
     </script>
   </body>
